@@ -1,0 +1,3 @@
+title,category,payload,type,severity,tags
+"Basic Alert XSS","XSS","<script>alert(1)</script>","URL Parameter","Medium","js, basic"
+"SQLi Union","SQL Injection","' UNION SELECT 1,2,3--","Body Parameter","High","mysql, union"

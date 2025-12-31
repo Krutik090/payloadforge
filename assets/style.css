@@ -1,0 +1,46 @@
+/* assets/style.css */
+body { font-family: 'Courier New', monospace; background: #121212; color: #e0e0e0; margin: 0; }
+a { color: #00e676; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Nav */
+nav { background: #1e1e1e; padding: 15px 20px; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
+.nav-brand { font-size: 1.2rem; font-weight: bold; color: #ff5252; }
+.nav-links a { margin-left: 20px; font-weight: bold; }
+.logout { color: #ff5252; }
+
+/* Layout */
+.main-content { padding: 20px; max-width: 1400px; margin: auto; }
+.container { background: #1e1e1e; padding: 20px; border-radius: 5px; border: 1px solid #333; }
+
+/* Forms */
+form { display: grid; gap: 10px; }
+label { font-weight: bold; margin-top: 10px; display: block;}
+input, select, textarea { width: 100%; background: #2c2c2c; border: 1px solid #444; color: #fff; padding: 10px; font-family: monospace; box-sizing: border-box; }
+textarea { height: 100px; }
+button { background: #2979ff; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+button:hover { background: #1565c0; }
+.btn-danger { background: #d32f2f; }
+.btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 12px; border: 1px solid #333; text-align: left; }
+th { background: #252526; color: #aaa; }
+tr:hover { background: #2c2c2c; }
+
+/* Badges */
+.badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #000; font-weight: bold; }
+.severity-Low { background: #4caf50; }
+.severity-Medium { background: #ffeb3b; }
+.severity-High { background: #ff9800; }
+.severity-Critical { background: #f44336; color: #fff; }
+
+/* Alerts */
+.alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+.success { background: #1b5e20; color: #fff; }
+.error { background: #b71c1c; color: #fff; }
+
+/* Utilities */
+.code-block { background: #000; padding: 10px; border: 1px solid #444; overflow-x: auto; color: #00e676; }
+.flex-row { display: flex; gap: 10px; align-items: flex-end; }
