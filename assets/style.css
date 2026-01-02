@@ -44,3 +44,31 @@ tr:hover { background: #2c2c2c; }
 /* Utilities */
 .code-block { background: #000; padding: 10px; border: 1px solid #444; overflow-x: auto; color: #00e676; }
 .flex-row { display: flex; gap: 10px; align-items: flex-end; }
+
+/* Add to assets/style.css */
+
+.category-section {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.category-section h3 {
+    margin-top: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Make tables slightly more compact in this view */
+.category-section td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #2c2c2c;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.category-section tr:last-child td {
+    border-bottom: none;
+}
