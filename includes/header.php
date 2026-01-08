@@ -2,6 +2,55 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once __DIR__ . '/functions.php'; 
 
+// --- AUTO-BACKUP LOGIC (Lazy Run) ---
+// This runs only when an Admin loads a page, and only once per month.
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    $backupDir = __DIR__ . '/../backups';
+    $currentMonthFile = 'auto_backup_' . date('Y-m') . '.sql'; // e.g., auto_backup_2023-10.sql
+    
+    // Check if backup exists for this month
+    if (!file_exists("$backupDir/$currentMonthFile")) {
+        
+        // Ensure directory exists
+        if (!is_dir($backupDir)) { 
+            mkdir($backupDir, 0755, true); 
+            // Protect directory
+            file_put_contents($backupDir . '/.htaccess', 'Deny from all'); 
+        }
+
+        // Connect to DB (using existing config)
+        require_once __DIR__ . '/../config/db.php';
+        
+        try {
+            // Simple PHP-based SQL Dump
+            $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+            $sql = "-- PayloadForge Auto Backup " . date('Y-m-d H:i:s') . "\n";
+            $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+
+            foreach ($tables as $table) {
+                // Structure
+                $row = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_NUM);
+                $sql .= "\n" . $row[1] . ";\n";
+                
+                // Data
+                $rows = $pdo->query("SELECT * FROM `$table`")->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($rows as $r) {
+                    $vals = array_map(fn($v) => $v === null ? "NULL" : $pdo->quote($v), array_values($r));
+                    $sql .= "INSERT INTO `$table` VALUES (" . implode(',', $vals) . ");\n";
+                }
+            }
+            $sql .= "\nSET FOREIGN_KEY_CHECKS=1;";
+            
+            // Save file
+            file_put_contents("$backupDir/$currentMonthFile", $sql);
+        } catch (Exception $e) {
+            // Silently fail (log to error log instead of breaking UI)
+            error_log("Auto Backup Failed: " . $e->getMessage());
+        }
+    }
+}
+// -------------------------------------
+
 // Helper to highlight active links
 function isActive($page) {
     return basename($_SERVER['PHP_SELF']) == $page ? 'active' : '';
@@ -53,6 +102,7 @@ function isActive($page) {
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark border-secondary">
                                 <li><a class="dropdown-item" href="admin.php">Control Panel</a></li>
+                                <li><a class="dropdown-item" href="admin_backups.php">Backups</a></li> <li><hr class="dropdown-divider border-secondary"></li>
                                 <li><a class="dropdown-item" href="payload_maintenance.php">Maintenance</a></li>
                             </ul>
                         </li>
