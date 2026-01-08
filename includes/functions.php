@@ -25,16 +25,16 @@ function has_role($allowed_roles = []) {
 
 function require_role($allowed_roles = []) {
     if (!has_role($allowed_roles)) {
-        die("<h3>Access Denied: You do not have permission to view this page.</h3>");
+        die("<div class='container mt-5'><div class='alert alert-danger'>⛔ Access Denied: Insufficient permissions.</div></div>");
     }
 }
 
-// HTML Escaping (Security)
+// HTML Escaping
 function h($string) {
     return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-// Flash Messages
+// Flash Messages (Updated for Bootstrap 5)
 function set_flash($message, $type = 'success') {
     $_SESSION['flash'] = ['msg' => $message, 'type' => $type];
 }
@@ -43,7 +43,19 @@ function display_flash() {
     if (isset($_SESSION['flash'])) {
         $type = $_SESSION['flash']['type'];
         $msg = $_SESSION['flash']['msg'];
-        echo "<div class='alert $type'>$msg</div>";
+        
+        // Map custom types to Bootstrap classes
+        $alertClass = match($type) {
+            'error', 'danger' => 'alert-danger',
+            'warning' => 'alert-warning',
+            'info' => 'alert-info',
+            default => 'alert-success'
+        };
+
+        echo "<div class='alert $alertClass alert-dismissible fade show' role='alert'>
+                $msg
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+              </div>";
         unset($_SESSION['flash']);
     }
 }

@@ -1,127 +1,88 @@
 <?php
-// index.php
-require 'config/db.php';
-require 'includes/header.php';
-require_login();
+require_once 'config/db.php';
+require_once 'includes/auth.php';
+$pageTitle = "Dashboard";
+include 'includes/header.php';
 
-// Search Filters
-$q = $_GET['q'] ?? '';
-$cat_filter = $_GET['cat'] ?? '';
+try {
+    // Fetch Categories and Counts
+    $sql = "SELECT c.id, c.name, COUNT(p.id) as payload_count 
+            FROM categories c 
+            LEFT JOIN payloads p ON c.id = p.category_id 
+            GROUP BY c.id 
+            ORDER BY c.name ASC";
+    $stmt = $pdo->query($sql);
+    $categories = $stmt->fetchAll();
 
-// 1. Fetch Payloads with Category Names
-$sql = "SELECT p.*, c.name as cat_name 
-        FROM payloads p 
-        JOIN categories c ON p.category_id = c.id 
-        WHERE (p.title LIKE ? OR p.tags LIKE ? OR p.payload_content LIKE ?)";
-
-$params = ["%$q%", "%$q%", "%$q%"];
-
-// Apply specific category filter if selected
-if (!empty($cat_filter)) {
-    $sql .= " AND c.id = ?";
-    $params[] = $cat_filter;
+    // Global Stats
+    $totalPayloads = $pdo->query("SELECT COUNT(*) FROM payloads")->fetchColumn();
+    $totalCategories = count($categories);
+} catch (PDOException $e) {
+    die("Database Error: " . $e->getMessage());
 }
-
-// Order by Category Name first, then Payload Title
-$sql .= " ORDER BY c.name ASC, p.title ASC";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$all_payloads = $stmt->fetchAll();
-
-// 2. Group Payloads by Category
-$grouped = [];
-foreach ($all_payloads as $p) {
-    $cat = $p['cat_name'];
-    if (!isset($grouped[$cat])) {
-        $grouped[$cat] = [];
-    }
-    $grouped[$cat][] = $p;
-}
-
-// Fetch categories for the filter dropdown
-$cats = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
 ?>
 
-<div class="container">
-    <div class="flex-row" style="justify-content:space-between; align-items:center; margin-bottom: 20px;">
-        <h2>Payload Knowledge Base</h2>
-        <?php if(has_role(['contributor', 'editor', 'admin'])): ?>
-            <div>
-                <a href="payload_import.php" class="btn-sm" style="background:#2c2c2c; margin-right:5px;">Bulk Import</a>
-                <a href="payload_add.php"><button class="btn-sm"> + Add Payload</button></a>
-            </div>
-        <?php endif; ?>
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="h2 text-white">🚀 Payload Dashboard</h1>
+            <p class="text-muted">Welcome, <strong class="text-white"><?= htmlspecialchars($_SESSION['username']); ?></strong></p>
+        </div>
+        <div>
+            <?php if(has_role(['contributor', 'editor', 'admin'])): ?>
+                <a href="payload_add.php" class="btn btn-primary shadow-sm"><i class="bi bi-plus-lg"></i>Add New</a>
+                <a href="payload_import.php" class="btn btn-outline-dark shadow-sm ms-2">Bulk Import</a>
+            <?php endif; ?>
+        </div>
     </div>
 
-    <form method="GET" class="flex-row" style="background: #252526; padding: 15px; border-radius: 5px; margin-bottom: 30px;">
-        <input type="text" name="q" value="<?= h($q) ?>" placeholder="Search payloads..." style="flex: 2;">
-        <select name="cat" style="flex: 1;">
-            <option value="">All Categories</option>
-            <?php foreach($cats as $c): ?>
-                <option value="<?= $c['id'] ?>" <?= $cat_filter == $c['id'] ? 'selected' : '' ?>>
-                    <?= h($c['name']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <button type="submit" class="btn-sm">Search</button>
-        <?php if($q || $cat_filter): ?>
-            <a href="index.php" style="color: #ff5252; margin-left: 10px; font-size: 0.9rem;">Clear</a>
-        <?php endif; ?>
-    </form>
+    <div class="row mb-5">
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow h-100 py-2 border-start border-4 border-primary">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Payloads</div>
+                    <div class="h3 mb-0 font-weight-bold text-white"><?= number_format($totalPayloads) ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow h-100 py-2 border-start border-4 border-success">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Categories</div>
+                    <div class="h3 mb-0 font-weight-bold text-white"><?= $totalCategories ?></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <?php if (empty($grouped)): ?>
-        <div class="alert error">No payloads found matching your criteria.</div>
-    <?php else: ?>
-        
-        <?php foreach ($grouped as $category_name => $payloads): ?>
-            <div class="category-section" style="margin-bottom: 40px;">
-                
-                <h3 style="border-bottom: 2px solid #444; padding-bottom: 10px; color: #00e676; margin-bottom: 15px;">
-                    <?= h($category_name) ?> 
-                    <span style="font-size: 0.8rem; color: #888; margin-left: 10px;">(<?= count($payloads) ?> items)</span>
-                </h3>
+    <h4 class="mb-4 text-white border-bottom border-secondary pb-2">Browse by Category</h4>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="30%">Title</th>
-                            <th width="15%">Context</th>
-                            <th width="10%">Severity</th>
-                            <th width="25%">Preview</th>
-                            <th width="20%">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($payloads as $p): ?>
-                        <tr>
-                            <td>
-                                <a href="payload_view.php?id=<?= $p['id'] ?>" style="font-weight:bold; font-size: 1.05rem;">
-                                    <?= h($p['title']) ?>
-                                </a>
-                                <br>
-                                <small style="color:#888"><?= h($p['tags']) ?></small>
-                            </td>
-                            <td><?= h($p['target_context']) ?></td>
-                            <td>
-                                <span class="badge severity-<?= h($p['severity']) ?>"><?= h($p['severity']) ?></span>
-                            </td>
-                            <td style="font-family: monospace; color: #ccc; font-size: 0.9rem;">
-                                <?= h(mb_strimwidth($p['payload_content'], 0, 40, "...")) ?>
-                            </td>
-                            <td>
-                                <textarea id="raw_<?= $p['id'] ?>" style="display:none;"><?= h($p['payload_content']) ?></textarea>
-                                <button class="btn-sm" onclick="copyToClipboard('raw_<?= $p['id'] ?>')">Copy</button>
-                                <a href="payload_view.php?id=<?= $p['id'] ?>" class="btn-sm" style="background:#444; color:#fff; text-decoration:none; display:inline-block; padding: 6px 10px;">View</a>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4 col-xl-3">
+            <a href="payload_view.php?category_id=all" class="card h-100 cat-card" style="border-left: 4px solid #00e676 !important;">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title fw-bold">All Payloads</h5>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge bg-success text-white"><?= number_format($totalPayloads) ?> Items</span>
+                        <span class="text-muted">&rarr;</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <?php foreach ($categories as $cat): ?>
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <a href="payload_view.php?category_id=<?= $cat['id'] ?>" class="card h-100 cat-card">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title fw-bold text-light"><?= htmlspecialchars($cat['name']) ?></h5>
+                        <div class="d-flex justify-content-between align-items-center mt-3 border-top border-secondary pt-3">
+                            <span class="badge bg-secondary"><?= number_format($cat['payload_count']) ?> Payloads</span>
+                            <span class="text-muted small">View</span>
+                        </div>
+                    </div>
+                </a>
             </div>
         <?php endforeach; ?>
-
-    <?php endif; ?>
+    </div>
 </div>
-
-<?php require 'includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>

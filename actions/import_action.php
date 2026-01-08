@@ -6,96 +6,81 @@ require '../includes/functions.php';
 require_login();
 require_role(['contributor', 'editor', 'admin']);
 
-// 1. Security Checks
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') die("Invalid Method");
-if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) die("CSRF Fail");
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
+    
+    // Security Check
+    if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) die("CSRF Error");
 
-if (!isset($_FILES['import_file']) || $_FILES['import_file']['error'] !== UPLOAD_ERR_OK) {
-    set_flash("File upload failed.", "error");
-    header("Location: ../payload_import.php");
-    exit;
-}
+    $file = $_FILES['import_file']['tmp_name'];
+    $ext = pathinfo($_FILES['import_file']['name'], PATHINFO_EXTENSION);
+    
+    $payloads = [];
 
-$file = $_FILES['import_file'];
-$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-$tmpName = $file['tmp_name'];
-
-// 2. Parse Data based on Extension
-$data = [];
-
-if ($ext === 'json') {
-    $jsonContent = file_get_contents($tmpName);
-    $data = json_decode($jsonContent, true);
-    if (!$data) {
-        set_flash("Invalid JSON format.", "error");
+    // 1. Parse JSON
+    if (strtolower($ext) === 'json') {
+        $json = file_get_contents($file);
+        $data = json_decode($json, true);
+        if (is_array($data)) $payloads = $data;
+    } 
+    // 2. Parse CSV
+    elseif (strtolower($ext) === 'csv') {
+        if (($handle = fopen($file, "r")) !== FALSE) {
+            $headers = fgetcsv($handle, 1000, ","); // Skip header row
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                // Map CSV columns: Title, Category, Payload, Type, Severity
+                $payloads[] = [
+                    'title' => $data[0] ?? 'Untitled',
+                    'category' => $data[1] ?? 'General',
+                    'payload' => $data[2] ?? '',
+                    'type' => $data[3] ?? 'URL Parameter',
+                    'severity' => $data[4] ?? 'Medium',
+                    'tags' => $data[5] ?? ''
+                ];
+            }
+            fclose($handle);
+        }
+    } else {
+        set_flash("Invalid file format. Only JSON or CSV allowed.", "danger");
         header("Location: ../payload_import.php");
         exit;
     }
-} 
-elseif ($ext === 'csv') {
-    if (($handle = fopen($tmpName, "r")) !== FALSE) {
-        // Get headers
-        $headers = fgetcsv($handle, 1000, ",");
+
+    // 3. Insert into Database
+    $count = 0;
+    foreach ($payloads as $p) {
+        // Resolve Category Name to ID
+        $cat_name = trim($p['category']);
+        $stmt = $pdo->prepare("SELECT id FROM categories WHERE name LIKE ?");
+        $stmt->execute([$cat_name]);
+        $cat_id = $stmt->fetchColumn();
+
+        // If category doesn't exist, default to 1 (Make sure you have a category with ID 1!)
+        if (!$cat_id) $cat_id = 1;
+
+        // MAPPING FIX: 'payload' from file -> 'payload_content' in DB
+        $sql = "INSERT INTO payloads (title, category_id, payload_content, target_context, severity, tags, author_id) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        // Loop rows
-        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            // Combine headers with row data safely
-            if (count($headers) == count($row)) {
-                $data[] = array_combine($headers, $row);
-            }
-        }
-        fclose($handle);
-    }
-} 
-else {
-    set_flash("Unsupported file format. Use CSV or JSON.", "error");
-    header("Location: ../payload_import.php");
-    exit;
-}
-
-// 3. Import Logic
-$count = 0;
-$errors = 0;
-
-// Fetch all categories for mapping (Name -> ID)
-$cats = $pdo->query("SELECT id, LOWER(name) as name FROM categories")->fetchAll(PDO::FETCH_KEY_PAIR);
-// Invert array to search by name: ['sql injection' => 1, 'xss' => 2]
-$catMap = array_flip($cats);
-
-$stmt = $pdo->prepare("INSERT INTO payloads (title, payload_content, category_id, sub_category, target_context, severity, tags, author_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-foreach ($data as $row) {
-    // Normalize keys (lowercase) if needed, or assume template adherence
-    $title = $row['title'] ?? 'Imported Payload';
-    $payload = $row['payload'] ?? '';
-    $catName = strtolower(trim($row['category'] ?? ''));
-    $type = $row['type'] ?? 'URL Parameter'; // Context
-    $severity = $row['severity'] ?? 'Medium';
-    $tags = $row['tags'] ?? 'import';
-
-    // Find Category ID (Default to 1 if not found)
-    $catId = $catMap[$catName] ?? 1;
-
-    if (!empty($payload)) {
         try {
+            $stmt = $pdo->prepare($sql);
             $stmt->execute([
-                $title,
-                $payload,
-                $catId,
-                'Imported', // Sub-category default
-                $type,
-                $severity,
-                $tags,
+                $p['title'], 
+                $cat_id, 
+                $p['payload'], // The content from the file
+                $p['type'] ?? 'Body Parameter',
+                $p['severity'] ?? 'Medium',
+                $p['tags'] ?? '',
                 $_SESSION['user_id']
             ]);
             $count++;
         } catch (Exception $e) {
-            $errors++;
+            // Silently skip errors or log them
+            continue;
         }
     }
-}
 
-// 4. Finish
-set_flash("Import complete! Added: $count, Failed: $errors", "success");
-header("Location: ../index.php");
+    set_flash("Successfully imported $count payloads!", "success");
+    header("Location: ../index.php");
+    exit;
+}
 ?>
